@@ -15,13 +15,8 @@
     "moduleResolution": "node",
     "outDir": "./lib",
     "lib": ["es6", "es2015", "es2017", "esnext"],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "types": [
-      "node",
-      "react"
-    ]
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "react"]
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

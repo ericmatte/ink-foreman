@@ -1,6 +1,6 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import { useApp } from "ink";
 import { useCallback, useEffect, useState } from "react";
+import { useApp } from "ink";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import path from "path";
 
 type ChildProcess = ChildProcessWithoutNullStreams | null;
@@ -12,13 +12,13 @@ export const useForeman = () => {
 
   const killForeman = useCallback(async () => {
     if (foreman === null) return;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       foreman.on("exit", () => {
         resolve();
       });
       foreman.kill();
     });
-  }, []);
+  }, [foreman]);
 
   useEffect(() => {
     const cmd = spawn("sh", [path.join(__dirname, "../tests/foreman-link.sh")]);
@@ -42,7 +42,7 @@ export const useForeman = () => {
       hasExited = true;
       cmd.kill();
     };
-  }, []);
+  }, [exit]);
 
   return { data, killForeman };
 };

@@ -1,7 +1,7 @@
 import { useApp, useInput, useStdin } from "ink";
 import { useEffect } from "react";
 
-export const useRawMode = (onCtrlC: () => void) => {
+export const useRawMode = (onCtrlC: () => void): void => {
   const { exit } = useApp();
   const { setRawMode } = useStdin();
 
@@ -10,7 +10,7 @@ export const useRawMode = (onCtrlC: () => void) => {
     return () => {
       setRawMode(false);
     };
-  }, []);
+  }, [setRawMode]);
 
   useInput((input, key) => {
     if (input === "q") {

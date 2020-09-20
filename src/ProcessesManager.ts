@@ -6,7 +6,7 @@ type Log = {
   timestamp: string;
 };
 
-type Process = {
+export type Process = {
   name: string;
   color: typeof ForegroundColor;
   data: Log[];

@@ -1,6 +1,7 @@
-import test from "ava";
 import path from "path";
 import fs from "fs";
+import test from "ava";
+
 import { ProcessesManager } from "../src/ProcessesManager";
 
 const MOCKED_FOREMAN_LOGS = fs.readFileSync(

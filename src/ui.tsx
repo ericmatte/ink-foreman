@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from "react";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
 import { Box, Text, useApp, useFocus } from "ink";
+
 import { useRawMode } from "./hooks/useRawMode";
 
 interface Props {
   name?: string;
 }
 
-export const App = ({ name = "Stranger" }: Props): React.ReactElement => {
+export const App = (_props: Props): React.ReactElement => {
   const { isFocused } = useFocus();
 
   const [state, setState] = useState("initialState");
@@ -15,7 +16,7 @@ export const App = ({ name = "Stranger" }: Props): React.ReactElement => {
   const onCtrlC = useCallback(() => {
     setState("exiting...");
     setTimeout(() => exit(), 2000);
-  }, []);
+  }, [exit]);
 
   useRawMode(onCtrlC);
   const [columns, rows] = useStdoutDimensions();
