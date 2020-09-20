@@ -14,7 +14,7 @@ export const App = ({ name = "Stranger" }: Props): React.ReactElement => {
 
   return (
     <>
-      <Text>{data}</Text>
+      <Text color="black">{data}</Text>
       <Text>
         {columns}×{rows}
       </Text>

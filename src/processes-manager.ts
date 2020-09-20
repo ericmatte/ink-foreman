@@ -1,7 +1,29 @@
 import { useState } from "react";
+import { ForegroundColor } from "chalk";
+
+// ForegroundColor
+
+type Process = {
+  data: string[];
+  color: typeof ForegroundColor;
+};
+
+const PROCESS_COLORS: Array<typeof ForegroundColor> = [
+  "greenBright",
+  "blueBright",
+  "redBright",
+  "magentaBright",
+  "yellowBright",
+  "green",
+  "blue",
+  "red",
+  "magenta",
+  "yellow",
+];
 
 class ProcessesManager {
-  processes: { [index: string]: string[] } = {};
+  processesCount = 0;
+  processes: { [index: string]: Process } = {};
 
   public addLogs(rawLogs: string) {
     const logs = rawLogs.split("\n");
@@ -12,10 +34,15 @@ class ProcessesManager {
     const groups = log.match(/[0-9:]{8} ([^ ]*)[ ]*\| (.*)/);
     if (groups === null) return;
 
-    if (!process[groups[1]]) {
-      process[groups[1]] = [];
+    const [, processName, processLog] = groups;
+    this.processesCount += 1;
+    if (!this.processes[processName]) {
+      this.processes[processName] = {
+        data: [],
+        color: PROCESS_COLORS[this.processesCount % PROCESS_COLORS.length],
+      };
     }
-    process[groups[1]].push(groups[2]);
+    this.processes[processName].data.push(processLog);
   }
 }
 
