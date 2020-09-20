@@ -1,4 +1,5 @@
 import React from "react";
+import useStdoutDimensions from "ink-use-stdout-dimensions";
 import { Box, Text, useFocus } from "ink";
 
 interface Props {
@@ -7,10 +8,14 @@ interface Props {
 
 export const App = ({ name = "Stranger" }: Props): React.ReactElement => {
   const { isFocused } = useFocus();
-  const { isFocused: is2 } = useFocus();
+
+  const [columns, rows] = useStdoutDimensions();
 
   return (
     <>
+      <Text>
+        {columns}×{rows}
+      </Text>
       <Text>{isFocused ? "I am focused" : "I am not focused"}</Text>
       {/* <Text>
       Hello, <Text color="green">{name}</Text>
@@ -18,7 +23,6 @@ export const App = ({ name = "Stranger" }: Props): React.ReactElement => {
       <Box borderStyle="round" borderColor="green">
         <Text>Green Rounded Box</Text>
       </Box>
-      <Text>{is2 ? "I am too focused" : "I am not too focused"}</Text>
     </>
   );
 };
