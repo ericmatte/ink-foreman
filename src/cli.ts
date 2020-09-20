@@ -16,4 +16,6 @@ const cli = meow(`
 	  Hello, Jane
 `);
 
-render(React.createElement(App, cli.flags));
+render(React.createElement(App, cli.flags), {
+  exitOnCtrlC: false, // Handled by the application
+});

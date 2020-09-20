@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
-import { Box, Text, useFocus } from "ink";
-import { useForeman } from "./foreman-watchdog";
+import { Box, Text, useApp, useFocus } from "ink";
+import { useRawMode } from "./hooks/useRawMode";
 
 interface Props {
   name?: string;
@@ -9,14 +9,22 @@ interface Props {
 
 export const App = ({ name = "Stranger" }: Props): React.ReactElement => {
   const { isFocused } = useFocus();
-  const [data] = useForeman();
+
+  const [state, setState] = useState("initialState");
+  const { exit } = useApp();
+  const onCtrlC = useCallback(() => {
+    setState("exiting...");
+    setTimeout(() => exit(), 2000);
+  }, []);
+
+  useRawMode(onCtrlC);
   const [columns, rows] = useStdoutDimensions();
 
   return (
     <>
-      <Text color="black">{data}</Text>
+      {/* <Text color="black">{data}</Text> */}
       <Text>
-        {columns}×{rows}
+        {columns}×{rows} - {state}
       </Text>
       <Text>{isFocused ? "I am focused" : "I am not focused"}</Text>
       {/* <Text>

@@ -1,7 +1,7 @@
 import test from "ava";
 import path from "path";
 import fs from "fs";
-import { ProcessesManager } from "../src/processes-manager";
+import { ProcessesManager } from "../src/ProcessesManager";
 
 const MOCKED_FOREMAN_LOGS = fs.readFileSync(
   path.join(__dirname, "./mocks/foreman.txt"),
@@ -12,13 +12,6 @@ test("classify processes", (t) => {
   const manager = new ProcessesManager();
 
   manager.addLogs(MOCKED_FOREMAN_LOGS);
-
-  console.log(
-    Object.values(manager.processes).map((p) => [
-      p.name,
-      p.data.map((d) => d.value),
-    ])
-  );
 
   const rawLogs = Object.values(manager.processes).reduce<string[]>(
     (acc, p) => {
