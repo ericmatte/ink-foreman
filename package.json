@@ -7,6 +7,8 @@
     "node": ">=8"
   },
   "scripts": {
+    "ink-foreman": "ts-node src/cli.ts",
+    "dev": "npx react-devtools > /dev/null 2>&1 & DEV=true yarn ink-foreman",
     "build": "tsc",
     "test": "ava"
   },
