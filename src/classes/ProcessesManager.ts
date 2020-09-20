@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ForegroundColor } from "chalk";
 
 type Log = {
@@ -12,6 +11,8 @@ export type Process = {
   data: Log[];
 };
 
+export type OnNewLogs = (process: Process[]) => void;
+
 export const PROCESS_COLORS: Array<typeof ForegroundColor> = [
   "greenBright",
   "blueBright",
@@ -23,7 +24,8 @@ export const PROCESS_COLORS: Array<typeof ForegroundColor> = [
 ];
 
 export class ProcessesManager {
-  processes: { [index: string]: Process } = {};
+  public processes: { [index: string]: Process } = {};
+  public onNewLogs: OnNewLogs | null = null;
 
   get processesCount(): number {
     return Object.keys(this.processes).length;
@@ -31,7 +33,15 @@ export class ProcessesManager {
 
   public addLogs(rawLogs: string) {
     const logs = rawLogs.split("\n");
-    logs.forEach((log) => this.addLog(log));
+    logs.forEach((log) => {
+      if (log !== "") {
+        this.addLog(log);
+      }
+    });
+
+    if (this.onNewLogs) {
+      this.onNewLogs(Object.values(this.processes));
+    }
   }
 
   private addLog(log: string) {
@@ -50,12 +60,3 @@ export class ProcessesManager {
     this.processes[processName].data.push({ timestamp, value: logValue });
   }
 }
-
-export const useProcesses = () => {
-  const [manager] = useState(new ProcessesManager());
-
-  return {
-    manager,
-    processes: manager.processes,
-  };
-};

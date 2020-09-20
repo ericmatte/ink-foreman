@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Newline, Spacer, Text, useFocus } from "ink";
 
-import { Process } from "../ProcessesManager";
+import { Process } from "../classes/ProcessesManager";
 
 type Props = {
   process: Process;

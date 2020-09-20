@@ -1,21 +1,25 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
 import { Text } from "ink";
 
 import { useRawMode } from "./hooks/useRawMode";
-import { useForeman } from "./hooks/useForeman";
-import { ProcessesManager } from "./ProcessesManager";
 import { LogsSection } from "./components/LogsSection";
+import { Foreman } from "./classes/Foreman";
+import { Process } from "./classes/ProcessesManager";
+
+const foreman = new Foreman();
 
 interface Props {
   name?: string;
 }
 
 export const App = (_props: Props): React.ReactElement => {
-  const manager = useRef(new ProcessesManager());
-  const { killForeman } = useForeman(manager.current);
+  const [processes, setProcesses] = useState<Process[]>([]);
 
-  useRawMode({ onCtrlC: killForeman });
+  useRawMode({ onCtrlC: foreman.kill });
+  useEffect(() => {
+    foreman.on("newLogs", setProcesses);
+  }, []);
 
   const [columns, rows] = useStdoutDimensions();
 
@@ -24,7 +28,7 @@ export const App = (_props: Props): React.ReactElement => {
       <Text>
         ink-foreman {columns}×{rows}
       </Text>
-      {Object.values(manager.current.processes).map((process) => (
+      {Object.values(processes).map((process) => (
         <LogsSection key={process.name} process={process} />
       ))}
     </>
