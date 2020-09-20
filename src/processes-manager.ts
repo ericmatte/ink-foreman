@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { ForegroundColor } from "chalk";
 
-// ForegroundColor
-
-type Process = {
-  data: string[];
-  color: typeof ForegroundColor;
+type Log = {
+  value: string;
+  timestamp: string;
 };
 
-const PROCESS_COLORS: Array<typeof ForegroundColor> = [
+type Process = {
+  name: string;
+  color: typeof ForegroundColor;
+  data: Log[];
+};
+
+export const PROCESS_COLORS: Array<typeof ForegroundColor> = [
   "greenBright",
   "blueBright",
   "redBright",
@@ -21,9 +25,12 @@ const PROCESS_COLORS: Array<typeof ForegroundColor> = [
   "yellow",
 ];
 
-class ProcessesManager {
-  processesCount = 0;
+export class ProcessesManager {
   processes: { [index: string]: Process } = {};
+
+  get processesCount(): number {
+    return Object.keys(this.processes).length;
+  }
 
   public addLogs(rawLogs: string) {
     const logs = rawLogs.split("\n");
@@ -31,18 +38,19 @@ class ProcessesManager {
   }
 
   private addLog(log: string) {
-    const groups = log.match(/[0-9:]{8} ([^ ]*)[ ]*\| (.*)/);
+    const groups = log.match(/([0-9:]{8}) ([^ ]*)[ ]*\| (.*)/);
     if (groups === null) return;
 
-    const [, processName, processLog] = groups;
-    this.processesCount += 1;
+    const [, timestamp, processName, logValue] = groups;
     if (!this.processes[processName]) {
       this.processes[processName] = {
-        data: [],
+        name: processName,
         color: PROCESS_COLORS[this.processesCount % PROCESS_COLORS.length],
+        data: [],
       };
     }
-    this.processes[processName].data.push(processLog);
+
+    this.processes[processName].data.push({ timestamp, value: logValue });
   }
 }
 

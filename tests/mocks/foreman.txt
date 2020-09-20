@@ -5,17 +5,17 @@
 00:04:52 worker.1       | started with pid 16240
 00:04:52 ws.1           | started with pid 16241
 00:04:52 rpc.1          | started with pid 16242
-00:04:52 web.1          | Logs on web
-00:04:52 webpack-dev.1  | Logs on webpack-dev
-00:04:52 i18n-dev.1     | Logs on i18n-dev
-00:04:52 i18n-typedef.1 | Logs on i18n-typedef
-00:04:52 worker.1       | Logs on worker
-00:04:52 ws.1           | Logs on ws
-00:04:52 rpc.1          | Logs on rpc
-00:04:57 rpc.1          | terminated by SIGINT
-00:04:57 ws.1           | exited with code 0
-00:04:57 worker.1       | terminated by SIGINT
-00:04:58 i18n-typedef.1 | terminated by SIGINT
-00:04:58 i18n-dev.1     | terminated by SIGINT
-00:04:52 webpack-dev.1  | terminated by SIGINT
-00:04:58 web.1          | exited with code 0
+00:04:53 web.1          | Logs on web
+00:05:12 webpack-dev.1  | Logs on webpack-dev
+00:05:12 i18n-dev.1     | Logs on i18n-dev
+00:05:12 i18n-typedef.1 | Logs on i18n-typedef
+00:05:12 worker.1       | Logs on worker
+00:05:12 ws.1           | Logs on ws
+00:05:12 rpc.1          | Logs on rpc
+00:05:12 rpc.1          | terminated by SIGINT
+00:05:57 ws.1           | exited with code 0
+00:05:57 worker.1       | terminated by SIGINT
+00:05:58 i18n-typedef.1 | terminated by SIGINT
+00:05:58 i18n-dev.1     | terminated by SIGINT
+00:05:52 webpack-dev.1  | terminated by SIGINT
+00:05:58 web.1          | exited with code 0
