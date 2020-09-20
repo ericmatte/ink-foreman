@@ -18,11 +18,8 @@ export const PROCESS_COLORS: Array<typeof ForegroundColor> = [
   "redBright",
   "magentaBright",
   "yellowBright",
-  "green",
-  "blue",
-  "red",
-  "magenta",
-  "yellow",
+  "cyanBright",
+  "greenBright",
 ];
 
 export class ProcessesManager {

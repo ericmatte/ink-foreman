@@ -1,39 +1,32 @@
-import React, { useCallback, useState } from "react";
+import React, { useRef } from "react";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
-import { Box, Text, useApp, useFocus } from "ink";
+import { Text } from "ink";
 
 import { useRawMode } from "./hooks/useRawMode";
+import { useForeman } from "./hooks/useForeman";
+import { ProcessesManager } from "./ProcessesManager";
+import { LogsSection } from "./components/LogsSection";
 
 interface Props {
   name?: string;
 }
 
 export const App = (_props: Props): React.ReactElement => {
-  const { isFocused } = useFocus();
+  const manager = useRef(new ProcessesManager());
+  const { killForeman } = useForeman(manager.current);
 
-  const [state, setState] = useState("initialState");
-  const { exit } = useApp();
-  const onCtrlC = useCallback(() => {
-    setState("exiting...");
-    setTimeout(() => exit(), 2000);
-  }, [exit]);
+  useRawMode({ onCtrlC: killForeman });
 
-  useRawMode(onCtrlC);
   const [columns, rows] = useStdoutDimensions();
 
   return (
     <>
-      {/* <Text color="black">{data}</Text> */}
       <Text>
-        {columns}×{rows} - {state}
+        ink-foreman {columns}×{rows}
       </Text>
-      <Text>{isFocused ? "I am focused" : "I am not focused"}</Text>
-      {/* <Text>
-      Hello, <Text color="green">{name}</Text>
-    </Text> */}
-      <Box borderStyle="round" borderColor="green">
-        <Text>Green Rounded Box</Text>
-      </Box>
+      {Object.values(manager.current.processes).map((process) => (
+        <LogsSection key={process.name} process={process} />
+      ))}
     </>
   );
 };

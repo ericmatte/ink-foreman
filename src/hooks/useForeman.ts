@@ -1,48 +1,45 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useApp } from "ink";
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import path from "path";
+import { spawn } from "child_process";
+// import path from "path";
 
-type ChildProcess = ChildProcessWithoutNullStreams | null;
+import { ProcessesManager } from "../ProcessesManager";
 
-export const useForeman = () => {
+export const useForeman = (manager: ProcessesManager) => {
   const { exit } = useApp();
-  const [foreman, setForeman] = useState<ChildProcess>(null);
-  const [data, setData] = useState("");
+  const foreman = useRef(
+    // spawn("sh", [path.join(__dirname, "../../tests/foreman-link.sh")])
+    spawn("bundle", ["exec", "foreman", "start"])
+  );
 
-  const killForeman = useCallback(async () => {
-    if (foreman === null) return;
+  const killForeman = useCallback(async (): Promise<void> => {
     return new Promise((resolve) => {
-      foreman.on("exit", () => {
+      console.log("Shutting down...");
+      foreman.current.on("exit", () => {
         resolve();
       });
-      foreman.kill();
+      foreman.current.kill("SIGINT");
     });
-  }, [foreman]);
+  }, []);
 
   useEffect(() => {
-    const cmd = spawn("sh", [path.join(__dirname, "../tests/foreman-link.sh")]);
-    let hasExited = false;
-
+    const cmd = foreman.current;
     cmd.stdout.on("data", (data: Buffer) => {
-      if (hasExited) return;
-      setData(data.toString());
+      console.log(data.toString());
+
+      manager.addLogs(data.toString());
     });
     cmd.stderr.on("data", (data: Buffer) => {
       exit(new Error(data.toString()));
     });
     cmd.on("exit", (_code) => {
-      hasExited = true;
       exit();
     });
 
-    setForeman(cmd);
     return () => {
-      if (hasExited) return;
-      hasExited = true;
-      cmd.kill();
+      cmd.removeAllListeners();
     };
-  }, [exit]);
+  }, [exit, manager]);
 
-  return { data, killForeman };
+  return { killForeman };
 };
