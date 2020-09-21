@@ -1,5 +1,4 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import path from "path";
 
 import { OnNewLogs, ProcessesManager } from "./ProcessesManager";
 
@@ -14,9 +13,9 @@ export class Foreman {
   constructor() {
     this.manager = new ProcessesManager();
     this.childProcess = spawn(
-      "sh",
-      [path.join(__dirname, "../../tests/mocks/fake-foreman.sh")]
-      // this.childProcess = spawn("bundle", ["exec", "foreman", "start"]);
+      "bundle",
+      ["exec", "foreman", "start"]
+      // "sh", [path.join(__dirname, "../../tests/mocks/fake-foreman.sh")]
     );
 
     this.onData = this.onData.bind(this);
