@@ -2,9 +2,9 @@ name: CI Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   buildAndTest:
@@ -12,6 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Build
         run: yarn build
