@@ -3,52 +3,43 @@ import { Box, Text, useFocus } from "ink";
 
 import { Process } from "../classes/ProcessesManager";
 
-type TitleProps = {
-  processName: string;
-  latestTimeStamp: string | null;
-  isFocused: boolean;
-};
-
 type Props = {
   process: Process;
   showTimeStamps: boolean;
+  height?: number;
 };
 
-const SectionTitle = ({
-  processName,
-  isFocused,
-  latestTimeStamp = "",
-}: TitleProps) => {
-  return (
-    <>
-      {latestTimeStamp && `╭─ ${latestTimeStamp} ${isFocused ? "━━" : "──"} `}
-      {processName}
-      {isFocused && " ◀"}
-    </>
-  );
-};
-
-export const LogsSection = ({ process, showTimeStamps }: Props) => {
+export const LogsSection = ({ process, showTimeStamps, height = 1 }: Props) => {
   const { isFocused } = useFocus();
 
-  const latestTimeStamp = process.data[process.data.length - 1]?.timestamp;
+  const data = process.data;
+  const latestTimeStamp = data[data.length - 1]?.timestamp;
+  const realEstate = [...Array(Math.max(height - 1, 0)).keys()].reverse();
 
   return (
-    <Box flexDirection="column">
-      <Text bold={isFocused} color={process.color}>
-        <SectionTitle
-          processName={process.name}
-          isFocused={isFocused}
-          latestTimeStamp={latestTimeStamp}
-        />
-      </Text>
-      {process.data.map((log) => (
-        <Text key={`${log.timestamp}-${log.value}`}>
-          <Text color={process.color}>{"│ "}</Text>
-          {showTimeStamps && ` ${log.timestamp} `}
-          {log.value}
+    <Box flexDirection="column" height={height}>
+      <Text color={process.color}>
+        {"╭─ "}
+        <Text bold={isFocused}>
+          {`${latestTimeStamp || ""} ${isFocused ? "━━" : "──"} `}
+          {process.name}
+          {isFocused && " ◀"}
         </Text>
-      ))}
+      </Text>
+      {realEstate.map((index) => {
+        const log = data[data.length - 1 - index];
+        return (
+          <Text key={index}>
+            <Text color={process.color}>{"│ "}</Text>
+            {log && (
+              <Text key={`${log.timestamp}-${log.value}`}>
+                {showTimeStamps && ` ${log.timestamp} `}
+                {log.value}
+              </Text>
+            )}
+          </Text>
+        );
+      })}
     </Box>
   );
 };

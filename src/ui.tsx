@@ -6,6 +6,7 @@ import { LogsSection } from "./components/LogsSection";
 import { Foreman } from "./classes/Foreman";
 import { Process } from "./classes/ProcessesManager";
 import { Legend } from "./components/Legend";
+import { useSectionHeights } from "./hooks/useSectionHeights";
 
 const foreman = new Foreman();
 
@@ -28,15 +29,17 @@ export const App = (_props: Props): React.ReactElement => {
     }
   });
 
-  // const [columns, rows] = useStdoutDimensions();
+  const processSections = Object.values(processes);
+  const { heights } = useSectionHeights(processSections.length);
 
   return (
     <>
-      {Object.values(processes).map((process) => (
+      {processSections.map((process, index) => (
         <LogsSection
           key={process.name}
           process={process}
           showTimeStamps={showTimeStamps}
+          height={heights[index]}
         />
       ))}
       <Legend
