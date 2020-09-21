@@ -10,9 +10,9 @@ type Props = {
 export const RawLogs = ({ logs }: Props) => {
   return (
     <Static items={logs}>
-      {(log) => (
+      {(log, index) => (
         <Text
-          key={`${log.name}-${log.timestamp}-${log.value}`}
+          key={`${index}-${log.name}-${log.timestamp}-${log.value}`}
           wrap="truncate-end"
         >
           <Text color={log.color}>

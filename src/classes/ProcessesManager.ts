@@ -59,7 +59,6 @@ export class ProcessesManager {
 
     const [, timestamp, processName, separator, value] = groups;
     const log: Log = { timestamp, value };
-    const color = PROCESS_COLORS[this.processesCount % PROCESS_COLORS.length];
 
     if (processName === "system") {
       if (this.onSystemLog) {
@@ -69,7 +68,7 @@ export class ProcessesManager {
       if (!this.processes[processName]) {
         this.processes[processName] = {
           name: processName,
-          color,
+          color: PROCESS_COLORS[this.processesCount % PROCESS_COLORS.length],
           data: [],
         };
       }
@@ -79,8 +78,8 @@ export class ProcessesManager {
     if (this.onRawLog) {
       this.onRawLog({
         timestamp,
-        value: logValue,
-        color,
+        value,
+        color: this.processes[processName]?.color || PROCESS_COLORS[0],
         name: processName,
         separator,
       });
