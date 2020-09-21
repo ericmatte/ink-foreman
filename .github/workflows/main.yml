@@ -1,0 +1,20 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  buildAndTest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn test
