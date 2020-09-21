@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import useStdoutDimensions from "ink-use-stdout-dimensions";
-import { Text } from "ink";
+import { useInput } from "ink";
 
 import { useRawMode } from "./hooks/useRawMode";
 import { LogsSection } from "./components/LogsSection";
 import { Foreman } from "./classes/Foreman";
 import { Process } from "./classes/ProcessesManager";
+import { Legend } from "./components/Legend";
 
 const foreman = new Foreman();
 
@@ -15,22 +15,34 @@ interface Props {
 
 export const App = (_props: Props): React.ReactElement => {
   const [processes, setProcesses] = useState<Process[]>([]);
+  const [showTimeStamps, setShowTimeStamps] = useState(false);
 
   useRawMode({ onCtrlC: foreman.kill });
   useEffect(() => {
     foreman.on("newLogs", setProcesses);
   }, []);
 
-  const [columns, rows] = useStdoutDimensions();
+  useInput((input) => {
+    if (input === "t") {
+      setShowTimeStamps((value) => !value);
+    }
+  });
+
+  // const [columns, rows] = useStdoutDimensions();
 
   return (
     <>
-      <Text>
-        ink-foreman {columns}×{rows}
-      </Text>
       {Object.values(processes).map((process) => (
-        <LogsSection key={process.name} process={process} />
+        <LogsSection
+          key={process.name}
+          process={process}
+          showTimeStamps={showTimeStamps}
+        />
       ))}
+      <Legend
+        systemStatus={"Started foreman."}
+        showTimeStamps={showTimeStamps}
+      />
     </>
   );
 };

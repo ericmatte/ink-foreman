@@ -1,5 +1,5 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-// import path from "path";
+import path from "path";
 
 import { OnNewLogs, ProcessesManager } from "./ProcessesManager";
 
@@ -13,8 +13,11 @@ export class Foreman {
 
   constructor() {
     this.manager = new ProcessesManager();
-    // spawn("sh", [path.join(__dirname, "../../tests/foreman-link.sh")])
-    this.childProcess = spawn("bundle", ["exec", "foreman", "start"]);
+    this.childProcess = spawn(
+      "sh",
+      [path.join(__dirname, "../../tests/mocks/fake-foreman.sh")]
+      // this.childProcess = spawn("bundle", ["exec", "foreman", "start"]);
+    );
 
     this.onData = this.onData.bind(this);
     this.onError = this.onError.bind(this);
@@ -30,11 +33,8 @@ export class Foreman {
   }
 
   public kill(): Promise<void> {
-    console.log("KILL!");
-
     return new Promise((resolve) => {
       if (!this.childProcess.killed) {
-        console.log("Shutting down...");
         this.childProcess.on("exit", () => resolve());
         this.childProcess.kill("SIGINT");
       }
@@ -46,7 +46,6 @@ export class Foreman {
   }
 
   private onError(data: Buffer) {
-    console.log("Erreur :O!");
     throw new Error(data.toString());
   }
 

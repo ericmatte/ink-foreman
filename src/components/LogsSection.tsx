@@ -1,32 +1,54 @@
 import React from "react";
-import { Box, Newline, Spacer, Text, useFocus } from "ink";
+import { Box, Text, useFocus } from "ink";
 
 import { Process } from "../classes/ProcessesManager";
 
-type Props = {
-  process: Process;
+type TitleProps = {
+  processName: string;
+  latestTimeStamp: string | null;
+  isFocused: boolean;
 };
 
-export const LogsSection = ({ process }: Props) => {
-  const { isFocused } = useFocus();
-  const log = process.data[process.data.length - 1];
+type Props = {
+  process: Process;
+  showTimeStamps: boolean;
+};
+
+const SectionTitle = ({
+  processName,
+  isFocused,
+  latestTimeStamp = "",
+}: TitleProps) => {
   return (
-    <Box borderStyle="round" borderColor={process.color}>
-      {isFocused && <Text>▶️</Text>}
-      <Text>{process.name}</Text>
-      <Newline />
-      <Spacer />
-      {/* {process.data.map((log) => (
-        <React.Fragment key={`${log.timestamp}-${log.value}`}>
-          <Text>
-            {log.timestamp} | {log.value}
-          </Text>
-          <Newline />
-        </React.Fragment>
-      ))} */}
-      <Text>
-        {log?.timestamp} | {log?.value}
+    <>
+      {latestTimeStamp && `╭─ ${latestTimeStamp} ${isFocused ? "━━" : "──"} `}
+      {processName}
+      {isFocused && " ◀"}
+    </>
+  );
+};
+
+export const LogsSection = ({ process, showTimeStamps }: Props) => {
+  const { isFocused } = useFocus();
+
+  const latestTimeStamp = process.data[process.data.length - 1]?.timestamp;
+
+  return (
+    <Box flexDirection="column">
+      <Text bold={isFocused} color={process.color}>
+        <SectionTitle
+          processName={process.name}
+          isFocused={isFocused}
+          latestTimeStamp={latestTimeStamp}
+        />
       </Text>
+      {process.data.map((log) => (
+        <Text key={`${log.timestamp}-${log.value}`}>
+          <Text color={process.color}>{"│ "}</Text>
+          {showTimeStamps && ` ${log.timestamp} `}
+          {log.value}
+        </Text>
+      ))}
     </Box>
   );
 };

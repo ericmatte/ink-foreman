@@ -1,3 +1,3 @@
 #!/bin/sh
-cd ../../web || exit 1
+cd ../../../web || exit 1
 bundle exec foreman start

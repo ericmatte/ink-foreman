@@ -1,16 +1,22 @@
 import { useApp, useInput, useStdin } from "ink";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type RawModeOptions = { onCtrlC: () => Promise<void> };
 
 export const useRawMode = ({ onCtrlC }: RawModeOptions): void => {
+  const [sigCount, setSigCount] = useState(0);
   const { exit } = useApp();
   const { setRawMode } = useStdin();
 
   const handleCtrlC = useCallback(async () => {
-    await onCtrlC();
-    exit();
-  }, [exit, onCtrlC]);
+    setSigCount(sigCount + 1);
+    if (sigCount === 0) {
+      await onCtrlC();
+      exit();
+    } else {
+      exit(new Error("Exited."));
+    }
+  }, [exit, onCtrlC, sigCount]);
 
   useEffect(() => {
     setRawMode(true);
@@ -20,11 +26,7 @@ export const useRawMode = ({ onCtrlC }: RawModeOptions): void => {
   }, [setRawMode]);
 
   useInput((input, key) => {
-    if (input === "q") {
-      exit();
-    }
-
-    if (key.ctrl && input === "c") {
+    if ((key.ctrl && input === "c") || input === "q") {
       handleCtrlC();
     }
   });
