@@ -13,6 +13,8 @@ export const Legend = ({ systemStatus, showTimeStamps }: Props) => {
   const commands: { value: string; title: string }[] = [
     { value: "Q", title: "Quit" },
     { value: "TAB", title: "Focus process" },
+    // { value: "ENTER", title: "Collapse" },
+    { value: "SPACE", title: "Expand" },
     { value: "T", title: (showTimeStamps ? "Hide" : "Show") + " timestamps" },
   ];
 

@@ -6,7 +6,8 @@ import { LogsSection } from "./components/LogsSection";
 import { Foreman } from "./classes/Foreman";
 import { Process } from "./classes/ProcessesManager";
 import { Legend } from "./components/Legend";
-import { useSectionHeights } from "./hooks/useSectionHeights";
+import { useHeights } from "./hooks/useHeights";
+import { useSectionFocusManager } from "./hooks/useSectionFocusManager";
 
 const foreman = new Foreman();
 
@@ -15,9 +16,11 @@ interface Props {
 }
 
 export const App = (_props: Props): React.ReactElement => {
+  const [focusedSection, setFocusedSection] = useState(0);
   const [processes, setProcesses] = useState<Process[]>([]);
   const [showTimeStamps, setShowTimeStamps] = useState(false);
 
+  useSectionFocusManager();
   useRawMode({ onCtrlC: foreman.kill });
   useEffect(() => {
     foreman.on("newLogs", setProcesses);
@@ -30,7 +33,7 @@ export const App = (_props: Props): React.ReactElement => {
   });
 
   const processSections = Object.values(processes);
-  const { heights } = useSectionHeights(processSections.length);
+  const { heights } = useHeights(processSections.length, focusedSection);
 
   return (
     <>
@@ -40,6 +43,8 @@ export const App = (_props: Props): React.ReactElement => {
           process={process}
           showTimeStamps={showTimeStamps}
           height={heights[index]}
+          autoFocus={index === 0}
+          onFocus={() => setFocusedSection(index)}
         />
       ))}
       <Legend
