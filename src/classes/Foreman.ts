@@ -1,6 +1,11 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 
-import { OnNewLogs, OnRawLog, ProcessesManager } from "./ProcessesManager";
+import {
+  OnNewLogs,
+  OnRawLog,
+  OnSystemLog,
+  ProcessesManager,
+} from "./ProcessesManager";
 
 export class Foreman {
   private manager: ProcessesManager;
@@ -28,11 +33,16 @@ export class Foreman {
   }
 
   public on(event: "newLogs", callback: OnNewLogs): void;
+  public on(event: "newSystemLog", callback: OnSystemLog): void;
   public on(event: "rawLogs", callback: OnRawLog): void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public on(event: "newLogs" | "rawLogs", callback: any): void {
+  public on(
+    event: "newLogs" | "newSystemLog" | "rawLogs",
+    callback: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  ): void {
     if (event === "newLogs") {
       this.manager.onNewLogs = callback;
+    } else if (event === "newSystemLog") {
+      this.manager.onSystemLog = callback;
     } else if (event === "rawLogs") {
       this.manager.onRawLog = callback;
     }

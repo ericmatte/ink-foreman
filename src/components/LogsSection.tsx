@@ -37,7 +37,7 @@ export const LogsSection = ({
         <Text bold={isFocused}>
           {`${latestTimeStamp || ""} ${isFocused ? "━━" : "──"} `}
           {process.name}
-          {isFocused && " ◀"}
+          {isFocused && <Text color="whiteBright"> ◀</Text>}
         </Text>
       </Text>
       {realEstate.map((index) => {

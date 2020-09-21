@@ -4,7 +4,7 @@ import { useInput } from "ink";
 import { useRawMode } from "./hooks/useRawMode";
 import { LogsSection } from "./components/LogsSection";
 import { Foreman } from "./classes/Foreman";
-import { DetailedLog, Process } from "./classes/ProcessesManager";
+import { DetailedLog, Log, Process } from "./classes/ProcessesManager";
 import { Legend } from "./components/Legend";
 import { useHeights } from "./hooks/useHeights";
 import { useSectionFocusManager } from "./hooks/useSectionFocusManager";
@@ -22,11 +22,13 @@ export const App = (_props: Props): React.ReactElement => {
   const [rawLogs, setRawLogs] = useState<DetailedLog[]>([]);
   const [showRawLogs, setShowRawLogs] = useState(false);
   const [showTimeStamps, setShowTimeStamps] = useState(false);
+  const [currentSystemLog, setCurrentSystemLog] = useState<Log | null>(null);
 
   useSectionFocusManager();
   useRawMode({ onCtrlC: foreman.kill });
   useEffect(() => {
     foreman.on("newLogs", setProcesses);
+    foreman.on("newSystemLog", setCurrentSystemLog);
     foreman.on("rawLogs", (value) => setRawLogs((logs) => [...logs, value]));
   }, []);
 
@@ -57,10 +59,7 @@ export const App = (_props: Props): React.ReactElement => {
           />
         ))
       )}
-      <Legend
-        systemStatus={"Started foreman."}
-        showTimeStamps={showTimeStamps}
-      />
+      <Legend showTimeStamps={showTimeStamps} statusLog={currentSystemLog} />
     </>
   );
 };

@@ -20,3 +20,5 @@ $ ink-foreman --help
   Usage
     $ ink-foreman
 ```
+
+_Note: This app may flicker on some terminals (ie.: iterm2)_

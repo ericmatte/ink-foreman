@@ -2,12 +2,14 @@ import React from "react";
 import { Box, Spacer, Text } from "ink";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
 
+import { Log } from "../classes/ProcessesManager";
+
 type Props = {
-  systemStatus: string | null;
   showTimeStamps: boolean;
+  statusLog: Log | null;
 };
 
-export const Legend = ({ systemStatus, showTimeStamps }: Props) => {
+export const Legend = ({ showTimeStamps, statusLog }: Props) => {
   const [columns, rows] = useStdoutDimensions();
 
   const commands: { value: string; title: string }[] = [
@@ -30,12 +32,11 @@ export const Legend = ({ systemStatus, showTimeStamps }: Props) => {
             <Text color="cyan">{` ${cmd.title} `}</Text>
           </React.Fragment>
         ))}
-        {systemStatus && (
-          <Text>
-            {` -  `}
-            <Text color="red">[System]</Text> {systemStatus}
-          </Text>
-        )}
+        <Text>
+          {` -  `}
+          <Text color="red">[System]</Text>{" "}
+          {statusLog ? statusLog.value : "Started foreman."}
+        </Text>
       </Text>
       <Spacer />
       {columns >= 140 && <Text dimColor>{`${columns}x${rows}`}</Text>}

@@ -1,6 +1,6 @@
 import { ForegroundColor } from "chalk";
 
-type Log = {
+export type Log = {
   value: string;
   timestamp: string;
 };
@@ -18,6 +18,7 @@ export type Process = {
 
 export type OnNewLogs = (process: Process[]) => void;
 export type OnRawLog = (log: DetailedLog) => void;
+export type OnSystemLog = (log: Log) => void;
 
 export const PROCESS_COLORS: Array<typeof ForegroundColor> = [
   "greenBright",
@@ -33,6 +34,7 @@ export class ProcessesManager {
   public processes: { [index: string]: Process } = {};
   public onNewLogs: OnNewLogs | null = null;
   public onRawLog: OnRawLog | null = null;
+  public onSystemLog: OnSystemLog | null = null;
 
   get processesCount(): number {
     return Object.keys(this.processes).length;
@@ -51,27 +53,35 @@ export class ProcessesManager {
     }
   }
 
-  private addLog(log: string) {
-    const groups = log.match(/([0-9:]{8}) ([^ ]*)([ ]*\| )(.*)/);
+  private addLog(logValue: string) {
+    const groups = logValue.match(/([0-9:]{8}) ([^ ]*)([ ]*\| )(.*)/);
     if (groups === null) return;
 
-    const [, timestamp, processName, separator, logValue] = groups;
-    if (!this.processes[processName]) {
-      this.processes[processName] = {
-        name: processName,
-        color: PROCESS_COLORS[this.processesCount % PROCESS_COLORS.length],
-        data: [],
-      };
-    }
+    const [, timestamp, processName, separator, value] = groups;
+    const log: Log = { timestamp, value };
+    const color = PROCESS_COLORS[this.processesCount % PROCESS_COLORS.length];
 
-    this.processes[processName].data.push({ timestamp, value: logValue });
+    if (processName === "system") {
+      if (this.onSystemLog) {
+        this.onSystemLog(log);
+      }
+    } else {
+      if (!this.processes[processName]) {
+        this.processes[processName] = {
+          name: processName,
+          color,
+          data: [],
+        };
+      }
+      this.processes[processName].data.push(log);
+    }
 
     if (this.onRawLog) {
       this.onRawLog({
         timestamp,
         value: logValue,
-        color: this.processes[processName].color,
-        name: this.processes[processName].name,
+        color,
+        name: processName,
         separator,
       });
     }
