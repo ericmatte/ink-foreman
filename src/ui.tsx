@@ -4,10 +4,11 @@ import { useInput } from "ink";
 import { useRawMode } from "./hooks/useRawMode";
 import { LogsSection } from "./components/LogsSection";
 import { Foreman } from "./classes/Foreman";
-import { Process } from "./classes/ProcessesManager";
+import { DetailedLog, Process } from "./classes/ProcessesManager";
 import { Legend } from "./components/Legend";
 import { useHeights } from "./hooks/useHeights";
 import { useSectionFocusManager } from "./hooks/useSectionFocusManager";
+import { RawLogs } from "./components/RawLogs";
 
 const foreman = new Foreman();
 
@@ -18,17 +19,22 @@ interface Props {
 export const App = (_props: Props): React.ReactElement => {
   const [focusedSection, setFocusedSection] = useState(0);
   const [processes, setProcesses] = useState<Process[]>([]);
+  const [rawLogs, setRawLogs] = useState<DetailedLog[]>([]);
+  const [showRawLogs, setShowRawLogs] = useState(false);
   const [showTimeStamps, setShowTimeStamps] = useState(false);
 
   useSectionFocusManager();
   useRawMode({ onCtrlC: foreman.kill });
   useEffect(() => {
     foreman.on("newLogs", setProcesses);
+    foreman.on("rawLogs", (value) => setRawLogs((logs) => [...logs, value]));
   }, []);
 
   useInput((input) => {
     if (input === "t") {
       setShowTimeStamps((value) => !value);
+    } else if (input === "r") {
+      setShowRawLogs((value) => !value);
     }
   });
 
@@ -37,16 +43,20 @@ export const App = (_props: Props): React.ReactElement => {
 
   return (
     <>
-      {processSections.map((process, index) => (
-        <LogsSection
-          key={process.name}
-          process={process}
-          showTimeStamps={showTimeStamps}
-          height={heights[index]}
-          autoFocus={index === 0}
-          onFocus={() => setFocusedSection(index)}
-        />
-      ))}
+      {showRawLogs ? (
+        <RawLogs logs={rawLogs} />
+      ) : (
+        processSections.map((process, index) => (
+          <LogsSection
+            key={process.name}
+            process={process}
+            showTimeStamps={showTimeStamps}
+            height={heights[index]}
+            autoFocus={index === 0}
+            onFocus={() => setFocusedSection(index)}
+          />
+        ))
+      )}
       <Legend
         systemStatus={"Started foreman."}
         showTimeStamps={showTimeStamps}

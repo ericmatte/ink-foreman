@@ -1,6 +1,6 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 
-import { OnNewLogs, ProcessesManager } from "./ProcessesManager";
+import { OnNewLogs, OnRawLog, ProcessesManager } from "./ProcessesManager";
 
 export class Foreman {
   private manager: ProcessesManager;
@@ -27,8 +27,15 @@ export class Foreman {
     this.childProcess.on("exit", this.onExit);
   }
 
-  public on(_event: "newLogs", callback: OnNewLogs) {
-    this.manager.onNewLogs = callback;
+  public on(event: "newLogs", callback: OnNewLogs): void;
+  public on(event: "rawLogs", callback: OnRawLog): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public on(event: "newLogs" | "rawLogs", callback: any): void {
+    if (event === "newLogs") {
+      this.manager.onNewLogs = callback;
+    } else if (event === "rawLogs") {
+      this.manager.onRawLog = callback;
+    }
   }
 
   public kill(): Promise<void> {
@@ -41,7 +48,8 @@ export class Foreman {
   }
 
   private onData(data: Buffer) {
-    this.manager.addLogs(data.toString());
+    const value = data.toString();
+    this.manager.addLogs(value);
   }
 
   private onError(data: Buffer) {

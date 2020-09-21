@@ -29,11 +29,11 @@ export const useHeights = (sectionsCount: number, focusedSection: number) => {
   }, [sectionsCount, rows, expandedSection, collapsedSections]);
 
   useInput((input, key) => {
-    if (input === " ") {
+    if (key.return) {
       setExpandedSection((lastSection) =>
         lastSection === focusedSection ? null : focusedSection
       );
-    } else if (key.return) {
+    } else if (input === " ") {
       // Collapse
       setCollapsedSections((sections) => {
         sections[focusedSection] = !sections[focusedSection];

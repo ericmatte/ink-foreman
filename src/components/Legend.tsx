@@ -12,30 +12,33 @@ export const Legend = ({ systemStatus, showTimeStamps }: Props) => {
 
   const commands: { value: string; title: string }[] = [
     { value: "Q", title: "Quit" },
-    { value: "TAB", title: "Focus process" },
-    { value: "ENTER", title: "Collapse" },
-    { value: "SPACE", title: "Expand" },
+    { value: "R", title: "Raw logs" },
+    { value: "TAB", title: "Focus" },
+    { value: "ENTER", title: "Expand" },
+    { value: "SPACE", title: "Collapse" },
     { value: "T", title: (showTimeStamps ? "Hide" : "Show") + " timestamps" },
   ];
 
   return (
     <Box>
-      {commands.map((cmd) => (
-        <React.Fragment key={cmd.value}>
-          <Text color="black" backgroundColor="cyan">
-            {` ${cmd.value} `}
+      <Text wrap="truncate-end">
+        {commands.map((cmd) => (
+          <React.Fragment key={cmd.value}>
+            <Text color="black" backgroundColor="cyan">
+              {` ${cmd.value} `}
+            </Text>
+            <Text color="cyan">{` ${cmd.title} `}</Text>
+          </React.Fragment>
+        ))}
+        {systemStatus && (
+          <Text>
+            {` -  `}
+            <Text color="red">[System]</Text> {systemStatus}
           </Text>
-          <Text color="cyan">{` ${cmd.title} `}</Text>
-        </React.Fragment>
-      ))}
-      {systemStatus && (
-        <Text>
-          {` -  `}
-          <Text color="red">[System]</Text> {systemStatus}
-        </Text>
-      )}
+        )}
+      </Text>
       <Spacer />
-      <Text dimColor>{`${columns}x${rows}`}</Text>
+      {columns >= 140 && <Text dimColor>{`${columns}x${rows}`}</Text>}
     </Box>
   );
 };

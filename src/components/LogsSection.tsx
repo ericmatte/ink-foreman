@@ -43,11 +43,11 @@ export const LogsSection = ({
       {realEstate.map((index) => {
         const log = data[data.length - 1 - index];
         return (
-          <Text key={index}>
+          <Text key={index} wrap="truncate-end">
             <Text color={process.color}>{"│ "}</Text>
             {log && (
               <Text key={`${log.timestamp}-${log.value}`}>
-                {showTimeStamps && ` ${log.timestamp} `}
+                {showTimeStamps && <Text dimColor>{` ${log.timestamp} `}</Text>}
                 {log.value}
               </Text>
             )}
