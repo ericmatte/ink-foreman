@@ -9,18 +9,16 @@ An [Ink](https://github.com/vadimdemedes/ink) React terminal application for man
 ## Install
 
 ```bash
-$ git clone https://github.com/ericmatte/ink-foreman
-$ npm install
-$ npm link
+git clone https://github.com/ericmatte/ink-foreman
+npm install
+npm run build
+npm link
 ```
 
 ## CLI
 
 ```
-$ ink-foreman --help
-
-  Usage
-    $ ink-foreman
+ink-foreman --help
 ```
 
 _Note: This app may flicker on some terminals (ie.: iterm2)_
